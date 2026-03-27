@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OATZA PREMIUM - V.I.P ONLY</title>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <style>
+        :root { --plyr-color-main: #ff4500; }
+        body { background: #050505; color: #eee; font-family: 'Segoe UI', sans-serif; margin: 0; padding-bottom: 20px; }
+        h1 { color: #ff4500; text-align: center; letter-spacing: 2px; text-shadow: 0 0 10px rgba(255,69,0,0.5); }
+        
+        /* ระบบ Loader โคตรเท่ */
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { border: 5px solid #222; border-top: 5px solid #ff4500; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #loader p { margin-top: 15px; color: #ff4500; font-weight: bold; }
+
+        /* หน้าหลัก */
+        #main-view { padding: 20px; }
+        #anime-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; }
+        .anime-card { background: #111; border-radius: 8px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.2s; position: relative; }
+        .anime-card:hover { transform: scale(1.05); border-color: #ff4500; box-shadow: 0 5px 15px rgba(255,69,0,0.3); }
+        .anime-card img { width: 100%; height: 230px; object-fit: cover; }
+        .anime-card h3 { font-size: 13px; padding: 10px; margin: 0; text-align: center; height: 35px; overflow: hidden; }
+        
+        /* หน้าเครื่องเล่น */
+        #player-view { display: none; padding: 15px; background: #000; min-height: 100vh; }
+        .video-wrapper { max-width: 1000px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); border-radius: 10px; overflow: hidden; }
+        #back-btn { background: #333; color: white; border: none; padding: 10px 20px; margin-bottom: 15px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: 0.2s; }
+        #back-btn:hover { background: #ff4500; }
+        .status { text-align: center; color: #666; font-size: 12px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="loader">
+    <div class="spinner"></div>
+    <p id="loader-text">กำลังเจาะระบบดึงลิงก์ 1080p...</p>
+</div>
+
+<div id="main-view">
+    <h1>🔥 OATZA ULTIMATE V.I.P 🔥</h1>
+    <div class="status" id="sync-status">ระบบกำลังรวมร่างฐานข้อมูล (Merging API)...</div>
+    <div id="anime-container"></div>
+</div>
+
+<div id="player-view">
+    <button id="back-btn" onclick="closePlayer()">🔙 กลับไปเลือกเรื่องใหม่</button>
+    <h2 id="current-title" style="color:#ff4500; text-align: center; margin-bottom: 10px;"></h2>
+    <div class="video-wrapper" id="player-target"></div>
+</div>
+
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<script>
+    // 🛡️ SECURITY GUARD: เช็คว่ามาจากหน้า index.html (ที่ให้กด 20 ครั้ง) หรือเปล่า
+    // ถ้าไม่ได้มาจากหน้าเว็บพี่ (Project001) ให้ดีดกลับไปหน้าแรกเลย!
+    if (!document.referrer.includes('oyuyfy7ff.github.io')) {
+        // อนุญาตให้เทสในเครื่องตอนรันไฟล์ตรงๆ ได้ แต่ถ้าอยู่บนเว็บต้องมาจากหน้าแรก
+        if (window.location.hostname !== "" && window.location.hostname !== "localhost") {
+             window.location.href = "index.html";
+        }
+    }
+
+    // 📡 API SOURCES
+    const API_JIKAN = "https://api.jikan.moe/v4/top/anime?limit=24";
+    // รวมลิงก์สำรอง (Auto-Fallback) ถ้าอันแรกล่ม ให้สลับไปอันสอง
+    const CONSUMET_APIS = [
+        "https://api.consumet.org/anime/gogoanime/",
+        "https://consumet-api.vercel.app/anime/gogoanime/",
+        "https://api-consumet-org-production.up.railway.app/anime/gogoanime/"
+    ];
+
+    let plyrInstance;
+    let currentAnimeId = null; // เอาไว้จำว่าดูเรื่องอะไรอยู่
+
+    // 🚀 INITIATE PORTAL
+    async function initOatzaPortal() {
+        const status = document.getElementById('sync-status');
+        try {
+            const res = await fetch(API_JIKAN);
+            const data = await res.json();
+            
+            // Deduplication (ดีดตัวซ้ำ)
+            const masterMap = new Map();
+            data.data.forEach(item => {
+                if(!masterMap.has(item.title)) masterMap.set(item.title, item);
+            });
+
+            const masterList = Array.from(masterMap.values());
+            renderList(masterList);
+            status.innerText = `รวมร่างสำเร็จ! พร้อมดูแบบ No Ads ${masterList.length} เรื่อง`;
+        } catch (e) {
+            status.innerText = "Jikan API มีปัญหาพี่! แต่ระบบยังทำงานต่อได้";
+        }
+    }
+
+    function renderList(list) {
+        document.getElementById('anime-container').innerHTML = list.map(anime => `
+            <div class="anime-card" onclick="startEngine('${encodeURIComponent(anime.title)}', '${anime.mal_id}')">
+                <img src="${anime.images.jpg.image_url}" loading="lazy">
+                <h3>${anime.title}</h3>
+            </div>
+        `).join('');
+    }
+
+    // ⚙️ ระบบขุดลิงก์ + Fallback API
+    async function startEngine(title, id) {
+        const loader = document.getElementById('loader');
+        const loaderText = document.getElementById('loader-text');
+        currentAnimeId = id; 
+
+        document.getElementById('main-view').style.display = 'none';
+        loader.style.display = 'flex';
+        loaderText.innerText = "กำลังเจาะระบบหาตอนล่าสุด...";
+
+        let watchData = null;
+        let successUrl = null;
+
+        // ระบบสลับ API สำรอง (ถ้าอันแรกล่ม ให้วนลูปหาอันถัดไป)
+        for (let apiUrl of CONSUMET_APIS) {
+            try {
+                loaderText.innerText = `กำลังเชื่อมต่อท่อส่งน้ำ: ${apiUrl.split('/')[2]}...`;
+                
+                const searchRes = await fetch(`${apiUrl}${decodeURIComponent(title)}`);
+                const searchData = await searchRes.json();
+                if (!searchData.results || searchData.results.length === 0) continue; // หาไม่เจอ ข้ามไป
+
+                const animeId = searchData.results[0].id;
+                const infoRes = await fetch(`${apiUrl}info/${animeId}`);
+                const infoData = await infoRes.json();
+                const lastEpId = infoData.episodes[infoData.episodes.length - 1].id;
+
+                loaderText.innerText = "เจาะลิงก์สำเร็จ! กำลังโหลดวิดีโอ...";
+                const watchRes = await fetch(`${apiUrl}watch/${lastEpId}`);
+                watchData = await watchRes.json();
+                
+                // หาความละเอียด 1080p หรือ default
+                const bestSource = watchData.sources.find(s => s.quality === '1080p' || s.quality === 'default');
+                successUrl = bestSource ? bestSource.url : watchData.sources[0].url;
+                break; // ได้ลิงก์แล้ว เบรกลูปเลย!
+            } catch (e) {
+                console.warn(`API ${apiUrl} ล่มหรือบล็อก กำลังสลับเส้นทาง...`);
+            }
+        }
+
+        loader.style.display = 'none';
+
+        if (successUrl) {
+            document.getElementById('player-view').style.display = 'block';
+            setupPlayer(successUrl, decodeURIComponent(title), watchData.subtitles);
+        } else {
+            alert("พี่! ลิงก์เรื่องนี้โดนบล็อกหมดเลย (API ร่วง) ต้องรอเขารีเฟรชเซิร์ฟเวอร์ครับ");
+            document.getElementById('main-view').style.display = 'block';
+        }
+    }
+
+    // 🎬 SETUP PREMIUM PLAYER
+    function setupPlayer(videoUrl, title, subtitles) {
+        document.getElementById('current-title').innerText = title;
+        const target = document.getElementById('player-target');
+        
+        // ถ้าระบบส่งซับไตเติ้ลมาด้วย ให้ดึงมาใส่ (ส่วนมากเป็น Eng แต่บางเรื่องมี Thai)
+        let tracksHTML = '';
+        if (subtitles && subtitles.length > 0) {
+            tracksHTML = subtitles.map(sub => 
+                `<track kind="captions" label="${sub.lang}" srclang="${sub.lang.substring(0,2).toLowerCase()}" src="${sub.url}" ${sub.lang.includes('Thai') ? 'default' : ''}>`
+            ).join('');
+        }
+
+        target.innerHTML = `
+            <video id="player" playsinline controls>
+                <source src="${videoUrl}" type="application/x-mpegURL" />
+                ${tracksHTML}
+            </video>
+        `;
+
+        if (plyrInstance) plyrInstance.destroy();
+        
+        plyrInstance = new Plyr('#player', {
+            speed: { selected: 1, options: [0.5, 1, 1.25, 1.5, 2] }
+        });
+
+        // 🧠 LOCALSTORAGE: ระบบจำเวลาดูค้างไว้ (Continue Watching)
+        const savedTime = localStorage.getItem(`oatza_time_${currentAnimeId}`);
+        
+        plyrInstance.on('ready', () => {
+            if (savedTime && savedTime > 5) { // ถ้าเคยดูเกิน 5 วินาที
+                if(confirm("พี่เคยดูเรื่องนี้ค้างไว้ จะดูต่อจากเดิมไหม?")) {
+                    plyrInstance.currentTime = parseFloat(savedTime);
+                }
+            }
+            plyrInstance.play();
+        });
+
+        // บันทึกเวลาเรื่อยๆ ตอนที่เล่น
+        plyrInstance.on('timeupdate', () => {
+            localStorage.setItem(`oatza_time_${currentAnimeId}`, plyrInstance.currentTime);
+        });
+    }
+
+    function closePlayer() {
+        if (plyrInstance) {
+            plyrInstance.pause();
+            // บันทึกเวลาช็อตสุดท้ายก่อนปิด
+            localStorage.setItem(`oatza_time_${currentAnimeId}`, plyrInstance.currentTime);
+        }
+        document.getElementById('player-view').style.display = 'none';
+        document.getElementById('main-view').style.display = 'block';
+    }
+
+    initOatzaPortal();
+</script>
+</body>
+</html>
+
