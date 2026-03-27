@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 
     <style>
-        /* ✅ สไตล์พื้นฐาน: เน้นความคลีนแบบมินิมอล */
+        /*  สไตล์พื้นฐาน: เน้นความคลีนแบบมินิมอล */
         :root {
             --bg-color: #f0f2f5; /* สีพื้นหลังโทน Facebook */
             --card-bg: #ffffff;  /* สีพื้นหลังการ์ด */
@@ -48,7 +48,7 @@
             letter-spacing: 1px;
         }
 
-        /* ✅ ส่วนควบคุม: แถบค้นหาและปุ่มสลับโหมด */
+        /*  ส่วนควบคุม: แถบค้นหาและปุ่มสลับโหมด */
         .controls {
             display: flex;
             justify-content: space-between;
@@ -88,7 +88,7 @@
         
         #theme-toggle:hover { color: var(--accent); }
 
-        /* ✅ หน้าหลัก: ตารางอนิเมะแบบ Feed */
+        /*  หน้าหลัก: ตารางอนิเมะแบบ Feed */
         #main-view {
             padding: 20px;
             max-width: 1200px;
@@ -151,7 +151,7 @@
             z-index: 10;
         }
 
-        /* ✅ หน้าเครื่องเล่น: พรีเมียมแบบลื่นไหล */
+        /*  หน้าเครื่องเล่น: */
         #player-view {
             display: none;
             padding: 20px;
@@ -189,7 +189,7 @@
             font-size: 1.3rem;
         }
 
-        /* ✅ สไตล์สถานะและ Loader */
+        /*  สไตล์สถานะและ Loader */
         .status-bar {
             text-align: center;
             color: var(--text-sub);
@@ -230,7 +230,7 @@
         
         <div class="controls">
             <input type="text" id="search-bar" placeholder="ค้นหาอนิเมะ..." onkeyup="filterAnime()">
-            <button id="theme-toggle" onclick="toggleTheme()">☀️/🌙</button>
+            <button id="theme-toggle" onclick="toggleTheme()">/</button>
         </div>
 
         <div class="status-bar" id="sync-status">ระบบกำลังรวมร่างฐานข้อมูล (Merging API)...</div>
@@ -240,7 +240,7 @@
     </div>
 
     <div id="player-view">
-        <button id="back-btn" onclick="closePlayer()">🔙 กลับไป Feed</button>
+        <button id="back-btn" onclick="closePlayer()"> กลับไป Feed</button>
         <div class="video-wrapper" id="player-target"></div>
         <h2 id="player-title"></h2>
     </div>
@@ -263,7 +263,7 @@
         let plyrInstance;
         let currentAnimeId = null; 
 
-        // 🚀 INITIATE PORTAL
+        //  INITIATE PORTAL
         async function initOatzaPortal() {
             const status = document.getElementById('sync-status');
             try {
@@ -312,7 +312,7 @@
             renderList(filtered);
         }
 
-        // ⚙️ ระบบขุดลิงก์ + Fallback API
+        //  ระบบขุดลิงก์ + Fallback API
         async function startEngine(title, id) {
             const loader = document.getElementById('loader');
             const loaderText = document.getElementById('loader-text');
@@ -360,7 +360,7 @@
             }
         }
 
-        // 🎬 SETUP PREMIUM PLAYER (พรีเมียมแบบลื่น)
+        //  SETUP PREMIUM PLAYER (พรีเมียมแบบลื่น)
         function setupPlayer(videoUrl, title, subtitles) {
             document.getElementById('player-title').innerText = title;
             const target = document.getElementById('player-target');
