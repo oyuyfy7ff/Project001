@@ -5,119 +5,115 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google" content="notranslate">
     <title>รักหอม 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&family=Sriracha&display=swap" rel="stylesheet">
     <style>
-        /* --- ส่วนตกแต่งความสวยงาม (CSS) --- */
-        
-        /* 1. ตั้งค่าพื้นฐาน: ฟอนต์น่ารักๆ และพื้นหลังสีชมพูอ่อน */
         body {
-            font-family: 'Kalam', 'Arial', sans-serif; /* ฟอนต์ลายมือน่ารักๆ */
-            background-color: #fff0f5; /* สีชมพู Lavender Blush หวานๆ */
-            color: #d81b60; /* ตัวหนังสือสีชมพูเข้ม */
+            font-family: 'Kalam', 'Sarabun', sans-serif;
+            background-color: #fff0f5;
+            color: #d81b60;
             text-align: center;
             margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh; /* ให้เนื้อหาอยู่กลางหน้าจอพอดี */
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* 2. กล่องเนื้อหาหลัก: สีขาว มีเงา และขอบมน */
         .heart-container {
-            background-color: rgba(255, 255, 255, 0.9); /* สีขาวโปร่งแสงนิดๆ */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
-            border-radius: 30px; /* ขอบมนสุดๆ */
-            box-shadow: 0 10px 25px rgba(216, 27, 96, 0.2); /* เงาสีชมพูบางๆ */
-            border: 2px solid #ffb6c1; /* ขอบสีชมพูอ่อน */
-            max-width: 90%; /* กันหลุดขอบมือถือ */
-            position: relative; /* เอาไว้แปะหัวใจลอยๆ */
-            animation: heartBeat 1.5s ease-in-out infinite; /* เอฟเฟกต์เต้นตุ้บๆ */
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(216, 27, 96, 0.2);
+            border: 2px solid #ffb6c1;
+            max-width: 90%;
+            position: relative;
+            animation: heartBeat 1.5s ease-in-out infinite;
+            cursor: pointer; /* ทำให้รู้ว่ากดได้ */
+            user-select: none; /* กันคลุมดำตอนรัวนิ้ว */
         }
 
-        /* 3. ตกแต่งหัวข้อหลัก: รักหอมม */
-        h1 {
-            font-size: 3rem; /* ตัวใหญ่ๆ */
-            margin-bottom: 10px;
-            color: #ff1493; /* สีชมพู Deep Pink */
-            text-shadow: 2px 2px 4px rgba(255, 182, 193, 0.5); /* เงาตัวหนังสือ */
+        h1 { font-size: 3rem; margin-bottom: 10px; color: #ff1493; }
+        p { font-size: 1.5rem; color: #c71585; margin: 5px 0; }
+        
+        /* สไตล์ตัวนับเลขแบบผู้เฒ่า (แอบซ่อนไว้บางๆ) */
+        #counter {
+            font-family: 'Sriracha', cursive;
+            font-size: 1rem;
+            color: #ffb6c1;
+            margin-top: 10px;
         }
 
-        /* 4. ตกแต่งเนื้อหา: หอมน่ารักที่สุดในโลกกก */
-        p {
-            font-size: 1.5rem;
-            line-height: 1.6;
-            margin-top: 0;
-            color: #c71585; /* สีชมพู Medium Violet Red */
-        }
-
-        /* 5. เอฟเฟกต์รูปหัวใจลอยๆ (ใช้ JavaScript สร้าง) */
         .heart {
             position: absolute;
-            color: #ff69b4; /* สีชมพู Hot Pink */
-            font-size: 20px;
+            color: #ff69b4;
             opacity: 0;
             animation: floatHeart 3s linear infinite;
+            pointer-events: none;
         }
 
-        /* --- ส่วนแอนิเมชัน (Animations) --- */
-
-        /* เอฟเฟกต์กล่องเต้นตุ้บๆ เหมือนหัวใจ */
         @keyframes heartBeat {
             0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
 
-        /* เอฟเฟกต์หัวใจลอยขึ้น */
         @keyframes floatHeart {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+            100% { transform: translateY(-150px) rotate(360deg); opacity: 0; }
         }
 
-        /* ปรับขนาดตัวหนังสือสำหรับมือถือ */
-        @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            p { font-size: 1.2rem; }
-        }
+        @media (max-width: 600px) { h1 { font-size: 2.2rem; } p { font-size: 1.2rem; } }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div class="heart-container" id="main-container">
+    <div class="heart-container" id="gate">
         <h1>รักหอมม 💖</h1>
         <p>หอมน่ารักที่สุดในโลกกก 😍</p>
         <p>🎀 ✨ ✨ 🎀</p>
+        <div id="counter">เคาะพิสูจน์รัก: 0</div>
     </div>
 
     <script>
-        // ฟังก์ชันสร้างรูปหัวใจลอยๆ รอบๆ กล่อง
+        let count = 0;
+        const target = 20; // ตั้งไว้ 20 ครั้งตามสูตรผู้เฒ่า OATZA
+        const gate = document.getElementById('gate');
+        const counterDisplay = document.getElementById('counter');
+
+        // ระบบวาร์ปเมื่อเคาะครบ
+        gate.addEventListener('click', () => {
+            count++;
+            counterDisplay.innerText = `อย่าเคาะๆ: ${count}`;
+            
+            // เอฟเฟกต์สั่นตอนกด
+            gate.style.animation = 'none';
+            setTimeout(() => { gate.style.animation = 'heartBeat 0.3s ease-in-out'; }, 10);
+
+            if (count >= target) {
+                // ผู้เฒ่ามาบอกลาก่อนวาร์ป
+                counterDisplay.innerText = "กำลังวาป ...";
+                counterDisplay.style.color = "#ff1493";
+                
+                setTimeout(() => {
+                    window.location.href = "anime.html"; // วาร์ปไปหน้าเมนูอนิเมะ
+                }, 500);
+            }
+        });
+
+        // ฟังก์ชันสร้างหัวใจลอย (ของเดิมของพี่)
         function createHeart() {
-            const container = document.getElementById('main-container');
             const heart = document.createElement('div');
             heart.classList.add('heart');
-            heart.innerHTML = '❤️'; // หรือใช้ '💖', '💗' ก็ได้
-            
-            // สุ่มตำแหน่งเริ่มต้น (ซ้าย-ขวา)
+            heart.innerHTML = '❤️';
             heart.style.left = Math.random() * 100 + '%';
-            // สุ่มเวลาเริ่มแอนิเมชัน
-            heart.style.animationDelay = Math.random() * 2 + 's';
-            // สุ่มขนาดหัวใจ
             heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
-
-            container.appendChild(heart);
-
-            // ลบรูปหัวใจทิ้งเมื่อแอนิเมชันจบ เพื่อไม่ให้หนักเครื่อง
-            setTimeout(() => {
-                heart.remove();
-            }, 3000);
+            gate.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 3000);
         }
 
-        // สร้างหัวใจใหม่ทุกๆ 0.5 วินาที
         setInterval(createHeart, 500);
     </script>
 
 </body>
 </html>
-
-
